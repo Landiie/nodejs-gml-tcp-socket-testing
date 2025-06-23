@@ -1,3 +1,3 @@
 /// @description Insert description here
 // You can write your code in this editor
-send_message("this is some data? " + string(random(1000)))
+send_message("let go")
