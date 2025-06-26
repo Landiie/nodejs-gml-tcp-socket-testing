@@ -1,3 +1,7 @@
 /// @description Insert description here
 // You can write your code in this editor
-send_message("let go")
+var data = "let go"
+var echoBuffer = buffer_create(string_length(data),buffer_fixed,1)
+buffer_write(echoBuffer, buffer_text, data)
+send_message(OP_ECHO,echoBuffer)
+buffer_delete(echoBuffer)

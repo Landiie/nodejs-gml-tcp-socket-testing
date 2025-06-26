@@ -7,6 +7,9 @@ switch(async_load[?"type"]) {
 		//show_debug_message(buffer_read(async_load[?"buffer"], buffer_text))
 		break;
 	}
+	case network_type_disconnect: {
+		show_debug_message("tcp socket disconnected.")
+	}
 }
 
 function scr_process_chunk(chunk, chunkSize) { //the chunk buffer passed in here automatically clears, no need to destroy it
@@ -60,7 +63,28 @@ function scr_process_chunk(chunk, chunkSize) { //the chunk buffer passed in here
 //does not delete the msgBuffer, thats handled in the async network event.
 function scr_process_message(msgBuffer) {
 	buffer_seek(msgBuffer, buffer_seek_start, 0)
+	var opCode = buffer_read(msgBuffer, buffer_u8)
+
+	switch (opCode) {
+		case OP_HEARTBEAT:
+			send_message(OP_HEARTBEAT)
+		break;
+		case OP_CLOSE:
+			scr_process_close_code(buffer_read(msgBuffer, buffer_u8))
+		break;
+	}
 	//show_debug_message(buffer_read(msgBuffer, buffer_text))
-	ds_list_add(messagesToDraw, {x: random(1366), y: random(768), text: buffer_read(msgBuffer, buffer_text)})
+	//ds_list_add(messagesToDraw, {x: random(1366), y: random(768), text: buffer_read(msgBuffer, buffer_text)})
 	
+}
+
+function scr_process_close_code(closeCode) {
+	switch (closeCode) {
+		case CLOSE_CODE_HEARTBEAT_FAILED:
+			show_debug_message("Connection closed because we forgot to send a heartbeat.")
+		break;
+		default:
+			show_debug_message("Connection closed due to unknown circumstances.");
+		break;
+	}
 }
