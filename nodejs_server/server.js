@@ -104,9 +104,9 @@ function getRandomInt(min, max) {
  */
 function processMessage(socket, msgBuffer) {
   const opCode = msgBuffer.readUInt8(0)
+  refreshAliveStatus();
   switch (opCode) {
     case OP_CODES.HEARTBEAT: {
-      refreshAliveStatus();
       console.log("HEARTBEAT: badum.")
     } break;
     case OP_CODES.ECHO: {

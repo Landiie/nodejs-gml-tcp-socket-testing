@@ -30,11 +30,13 @@ export function heartbeatStart() {
 }
 
 export function refreshAliveStatus() {
-    isAlive = true;
+    heartbeatStop();
+    heartbeatStart();
 }
 
 export function heartbeatStop() {
     if (timerId !== null) {
         clearInterval(timerId)
+        timerId = null
     }
 }
