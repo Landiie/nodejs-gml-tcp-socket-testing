@@ -1,7 +1,10 @@
 {
+  "resourceType": "GMMainOptions",
+  "resourceVersion": "1.4",
+  "name": "Main",
   "option_gameguid": "3b75f693-93b0-4206-b6a9-86fc2690942c",
   "option_gameid": "0",
-  "option_game_speed": 9999,
+  "option_game_speed": 240,
   "option_mips_for_3d_textures": false,
   "option_draw_colour": 4294967295,
   "option_window_colour": 255,
@@ -14,8 +17,4 @@
   "option_template_image": "${base_options_dir}/main/template_image.png",
   "option_template_icon": "${base_options_dir}/main/template_icon.png",
   "option_template_description": null,
-  "resourceVersion": "1.4",
-  "name": "Main",
-  "tags": [],
-  "resourceType": "GMMainOptions",
 }

@@ -1,11 +1,10 @@
 import net from "net";
-import { heartbeatStart, refreshAliveStatus } from "./heartbeat.js";
 import { CLOSE_CODES, OP_CODES, PCK_HD } from "./enums.js";
+import * as heartbeat from "./heartbeat.js"
 const PORT = 9472;
 const server = net.createServer();
 
-/** @type {net.Socket} */
-export let clientSocket = null;
+/**@type {net.Socket}*/ export let clientSocket = null;
 
 server.on("connection", sock => {
   if (clientSocket !== null) {
@@ -29,8 +28,7 @@ server.on("connection", sock => {
   console.log("CONNECTED:", sock.remoteAddress + ":" + sock.remotePort);
 
   let buffer = Buffer.alloc(0);
-  heartbeatStart()
-
+  heartbeat.start();
 
   //for (let i = 0; i < 1000; i++) {
   //  sendMessage(sock, `WAAAAA, a response plus number: ${getRandomInt(1, 10000)}`)
@@ -79,6 +77,12 @@ server.listen(PORT, () => {
   console.log("TCP Server is running on port", PORT);
 });
 
+/**
+ * Sends a message across the network to the client.
+ * @param {net.Socket} socket Socket to optionally send a response to based on the provided op code in the msgBuffer
+ * @param {OP_CODES} opCode Operation code to perform on the data to the client
+ * @param {Buffer} dataBuffer message buffer to process.
+ */
 export function sendMessage(socket, opCode, dataBuffer = null) {
   let packet = Buffer.alloc(8);
   let content = Buffer.alloc(1);
@@ -91,20 +95,15 @@ export function sendMessage(socket, opCode, dataBuffer = null) {
   socket.write(packet)
 }
 
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 
 /**
- * @description Processes a complete message from socket.
+ * Processes a complete message from socket.
  * @param {net.Socket} socket Socket to optionally send a response to based on the provided op code in the msgBuffer
  * @param {Buffer} msgBuffer message buffer to process.
  */
 function processMessage(socket, msgBuffer) {
   const opCode = msgBuffer.readUInt8(0)
-  refreshAliveStatus();
+  heartbeat.refreshAliveStatus();
   switch (opCode) {
     case OP_CODES.HEARTBEAT: {
       console.log("HEARTBEAT: badum.")
@@ -121,7 +120,7 @@ function processMessage(socket, msgBuffer) {
 }
 
 /**
- * @description Closes the client socket with an error code. An error code is required to be communicated.
+ * Closes the client socket with an error code. An error code is required to be communicated.
  * @param {number} closeCode use enum `CLOSE_CODES` to pick your close code.
  */
 export function closeClientSocket(closeCode) {

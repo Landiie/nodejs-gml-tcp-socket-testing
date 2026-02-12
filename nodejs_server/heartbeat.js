@@ -4,23 +4,25 @@ import { CLOSE_CODES, OP_CODES } from "./enums.js";
 const INTERVAL = 2000
 
 let timerId = null;
-export let isAlive = true;
+let isAlive = true;
 
-
-export function heartbeatStart() {
-    heartbeatStop();
+/**
+ * Starts the heartbeat.
+ */
+export function start() {
+    stop();
     isAlive = true
 
     timerId = setInterval(() => {
         if (clientSocket === null) {
-            heartbeatStop()
+            stop()
             return
         }
 
         if (!isAlive) {
             console.error("Heartbeat failed to recieve in time from client. closing.")
             closeClientSocket(CLOSE_CODES.HEARTBEAT_FAILED)
-            heartbeatStop() //should already get called when the socket closes, but just doing this incase.
+            stop() //should already get called when the socket closes, but just doing this incase.
             return;
         }
 
@@ -29,12 +31,15 @@ export function heartbeatStart() {
     }, INTERVAL);
 }
 
+/**
+ * Starts the heartbeat.
+ */
 export function refreshAliveStatus() {
-    heartbeatStop();
-    heartbeatStart();
+    stop();
+    start();
 }
 
-export function heartbeatStop() {
+export function stop() {
     if (timerId !== null) {
         clearInterval(timerId)
         timerId = null

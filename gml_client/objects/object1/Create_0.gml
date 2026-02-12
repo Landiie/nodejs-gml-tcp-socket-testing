@@ -36,5 +36,6 @@ function send_message(opCode, dataBuffer = undefined) {
 	}
 	buffer_seek(clientSendBuffer, buffer_seek_start, 0)
 	buffer_write(clientSendBuffer, buffer_u64, contentSize)
-    network_send_raw(client, clientSendBuffer, contentSize + BUFFER_U64_SIZE);
+    var status = network_send_raw(client, clientSendBuffer, contentSize + BUFFER_U64_SIZE);
+	show_debug_message(status);
 }
